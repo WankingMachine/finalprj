@@ -35,6 +35,14 @@ function message(name,gender,time,fans,fav)
     one['fav']=fav;
     return one;
 }
+function weibo(name,time,text)
+{
+    one={};
+    one['name']=name;
+    one['time']=time;
+    one['text']=text;
+    return one;
+}
 function isuser(user)
 {
      if(users.includes(user))
@@ -108,9 +116,29 @@ router.get('/',async (ctx,next)=>{
     else{
     console.log(zqj.gettime());
     let friends=[];
-    friends.push(message('Jing_Mini_Shop','2018年1月1号','我的第一条微博消息!'));
-    friends.push(message('Jing_Mini_Shop','2018年11月3号','IG夺冠了！'));
-    friends.push(message('Jing_Mini_Shop','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
+    // friends.push(message('Jing_Mini_Shop','2018年1月1号','我的第一条微博消息!'));
+    // friends.push(message('Jing_Mini_Shop','2018年11月3号','IG夺冠了！'));
+    // friends.push(message('Jing_Mini_Shop','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
+    user="Jing_Mini_Shop";
+    var result =await client.query("webo",'select ?attentionuser ?x ?text ?data ?dianzan where\
+    {\
+        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".	\
+        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
+        ?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
+        ?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
+        ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?attentionId.\
+        ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	?attentionuser.\
+        ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	?attentionId.\
+	    ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	?text;\
+		<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>	?data;\
+		<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_attitudesnum>	?dianzan.\
+    }'
+    );
+    result=result["results"]["bindings"];
+    for (let i=0;i<result.length;i++)
+    {
+        friends.push((weibo(result[i]["attentionuser"]['value'],result[i]["data"]['value'],result[i]["text"]['value'])));
+    }
     let myid=user;
     let owner=true;
     await ctx.render('main',{
@@ -127,7 +155,7 @@ router.post('/fabu',async (ctx,next)=>{
     if(!isuser(user))
     ctx.response.redirect('/login.html')
     else{
-    var result=await client.query('webo','insert data{	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	"'+text+'".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date> "'+time+'"^^<http://www.w3.org/2001/XMLSchema#dateTime>.	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'> <http://www.w3.org/2000/01/rdf-schema#label> "weibo #'+wnum+'".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>	"'+wnum+'".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	"2073124930".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo>.}');
+    var result=await client.query('webo','insert data{	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	"'+text+'".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date> "'+time+'"^^<http://www.w3.org/2001/XMLSchema#dateTime>.	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'> <http://www.w3.org/2000/01/rdf-schema#label> "weibo #'+wnum+'".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>	"'+wnum+'".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	"'+wnum+'".	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#weibo/'+wnum+'>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo>.}');
     console.log(zqj.gettime());
     wnum++;
     console.log('有人发布微博');
@@ -231,17 +259,21 @@ router.get('/data',async (ctx,next)=>{
     //var result = await client.query("webo",'insert data{<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>	"m". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>	"浙江 温州". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>	"0". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>	"0". }');
     //var result = await client.query("webo",'select ?gender ?loc ?fans ?fav where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name> "zxc".?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender> ?gender.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location> ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum> ?fans.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum> ?fav.}');
     //var result = await client.query("webo", 'select  ?o where{	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"zqj".		?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_password>	?p.}');
-    
-    var result =await client.query("webo",'select ?text ?data ?dianzan where\
+    user="Jing_Mini_Shop";
+    var result =await client.query("webo",'select ?attentionuser ?x ?text ?data ?dianzan where\
     {\
-        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"Deng088191".\
+        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".	\
         ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
-        ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	?id.\
-        ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	?text;\
-            <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>	?data;\
-            <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_attitudesnum>	?dianzan.\
-    }\
-    ');
+        ?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
+        ?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
+        ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?attentionId.\
+        ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	?attentionuser.\
+        ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	?attentionId.\
+	    ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	?text;\
+		<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>	?data;\
+		<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_attitudesnum>	?dianzan.\
+    }'
+    );
     ctx.response.body=result;
     console.log('test');
     await next(); 
