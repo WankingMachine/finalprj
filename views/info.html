@@ -1,0 +1,182 @@
+    <!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>我的首页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+    <link rel="icon" href="img/Register-img/logo.png" />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/register_nav.css" />
+    <link rel="stylesheet" href="css/addlist.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+
+
+</head>
+
+<body>
+    <header class="register-nav">
+
+        <div class="inner">
+            <img src="img/Register-img/pku.jpg" alt="" width="32px" height="32px" />&nbsp;&nbsp;
+            <i>北大微博</i>
+            <div class="header-search">
+                <input type="text" placeholder="输入你要查找的用户ID" name="search" id="search" />
+
+                <a href="#" class="en">
+                    <img src="img/Register-img/search2.png" alt="" onclick='alert("sb")'/>
+                </a>
+
+            </div>
+
+            <div class="he2">
+                <ul>
+                    <li>
+                        <a href="#">
+                            <img src="img/Register-img/yonghu.png" alt="" style="vertical-align: text-top" />&nbsp;&nbsp;
+                            <span>zqj</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="dingwei">
+                <ul class="side-left">
+                    <li onclick="window.location.href='/';" class="shou-ye">首页</li>
+                    <% if(owner){%>
+                        <li onclick="window.location.href='/addlist';">我的关注</li>
+                        <li>我的赞</li>
+                        <%}else{%>
+                            <li onclick="window.location.href='/addlist';">他的关注</li>
+                        <li>他的赞</li>
+                        <%}%>
+                </ul>
+                
+                </div>
+            </div>
+            
+            <div class="col-md-7">
+                    <ul class="side-sec">
+                            <li class="sec">详细信息&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span id="xiaLa">></span>
+                                <ul class="guan-zhu">
+                          
+                                    
+                            </ul>
+                            </li>
+                            
+                        </ul>
+                <% for(var i=0;i<friends.length;i++){%>
+                <% if(myself){%>
+                <div class="remen ">
+                    
+                    <div class="remen-inner one">
+                    <img  src='img/avtar.png'>
+                        <span class="name" onclick="my(this)"><%=friends[i]['name']%></span>
+                        <div>
+                        <p style="width:15%;float:left">性别：</p>
+                        <td style="width:85%;float:left"><!--单元格开始-->
+                        <select><!下拉框控件>
+                        <option><%=friends[i]['gender']%></option>
+                        <option value = "1">男</option>
+                        <option value = "2">女</option>
+                        </select>
+                        </td>
+                        </div>
+                        <div >
+                        <p style="width:15%">生日：</p>
+                        <input type="date" style="width:85%;float:left" value=<%=friends[i]['birth']%>/>
+                        </div>
+                        
+                        <!-- <p contenteditable='true'>生日：1998-01-01</p>
+                        <p contenteditable='true'>个人简介：这个人很懒，什么都没有留下</p> -->
+                    </div>
+                    <ul>
+                        <li><span >&nbsp</span></li>
+                        <li><span style="font-size:13px;color:black">关注数量:</span><%=friends[i]['fav']%></li>
+                        <li><span style="font-size:13px;color:black">粉丝数量:</span><%=friends[i]['fans']%></li>
+                    </ul>
+                    <!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
+                </div>
+                <%}else{%>
+                <div class="remen ">
+                    
+                    <div class="remen-inner one">
+                    <img  src='img/avtar.png'>
+                        <p class="name" style="width:50%;float:left" onclick="my(this)"><%=friends[i]['name']%></p>
+                        <% if(!focus){%>
+                        <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">关注</p>
+                        <%}else{%>
+                        <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">取消关注</p>
+                        <%}%>
+                        <p>性别： <%=friends[i]['gender']%></p>
+                        <p>注册地： <%=friends[i]['birth']%></p>
+                    </div>
+                    <ul>
+                        <li><span >&nbsp</span></li>
+                        <li><span style="font-size:13px;color:black">关注数量:</span><%=friends[i]['fav']%></li>
+                        <li><span style="font-size:13px;color:black">粉丝数量:</span><%=friends[i]['fans']%></li>
+                    </ul>
+                    <!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
+                </div>
+                <%}%>
+                <%}%>
+                <% for(var i=0;i<friends.length;i++){%>
+                <div class="remen">
+                    
+                    <div class="remen-inner one">
+                    <img  src='img/avtar.png'>
+                        <span class="name" onclick="my(this)"><%=friends[i]['name']%></span>
+                        <span class="time">111</span>
+                        <p>111</p>
+                    </div>
+                    <ul>
+                        <li><span class="zhuan">1</span></li>
+                        <li><span class="ping">2</span></li>
+                        <li><span class="dian">2</span></li>
+                    </ul>
+                    <!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
+                </div>
+                <% }%>
+
+                <p class="ye"></p>
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+        <script src="js/register_nav.js"></script>
+        <script src="js/body.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/DynamicFill.js"></script>
+
+
+</body>
+
+</html>

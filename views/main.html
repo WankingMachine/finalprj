@@ -1,0 +1,185 @@
+	<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>我的首页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+    <link rel="icon" href="img/Register-img/logo.png" />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/register_nav.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+
+
+</head>
+
+<body>
+    <header class="register-nav">
+
+        <div class="inner">
+            <img src="img/Register-img/pku.jpg" alt="" width="32px" height="32px" />&nbsp;&nbsp;
+            <i>北大微博</i>
+            <div class="header-search">
+                <input type="text" placeholder="输入你要查找的用户ID" name="search" id="search" />
+
+                <a href="#" class="en">
+                    <img src="img/Register-img/search2.png" alt="" onclick="search()"/>
+                </a>
+
+            </div>
+
+            <div class="he2">
+                <ul>
+                    <li>
+                        <a href="#">
+                            <img src="img/Register-img/yonghu.png" onclick="myinfo()" alt="" style="vertical-align: text-top" />&nbsp;&nbsp;
+                            <span id='user' onclick="myinfo()"><%=myid%></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+				<div class="dingwei">
+                <ul class="side-left">
+                    <li onclick="window.location.href='/';" class="shou-ye">首页</li>
+                    <% if(owner){%>
+                        <li onclick="window.location.href='/addlist';">我的关注</li>
+                    <li>我的赞</li>
+                    <%}else{%>
+                        <li onclick="window.location.href='/addlist';">我的关注</li>
+                    <li>他的赞</li>
+                    <%}%>
+                </ul>
+                
+				</div>
+			</div>
+			
+            <div class="col-md-7">
+            <% if(owner){%>
+                <div class="fu-bu">
+                    <p>
+                        <b>分享新鲜事</b>
+                    </p>
+                    <textarea id="myText" type="text" ></textarea>
+
+                    <button id='Send' type="button" class="btn btn-info" onclick="fabu()"><font size="3" color="white">发布</font></button>
+                  
+                </div>
+            <%}%>
+                <% for(var i=0;i<friends.length;i++){%>
+				<div class="remen">
+					
+					<div class="remen-inner one">
+                    <img  src='img/avtar.png'>
+						<span id= 'friend' class="name" onclick="info()"><%=friends[i]['name']%></span>
+						<span class="time"><%=friends[i]['time']%> </span>
+						<p><%=friends[i]['text']%></p>
+					</div>
+					<ul>
+						<li><span class="zhuan">1</span></li>
+						<li><span class="ping">2</span></li>
+						<li><span class="dian">2</span></li>
+					</ul>
+					<!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
+				</div>
+                <% }%>
+
+				<p class="ye"></p>
+			</div>
+			<div class="col-md-3">
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+        <script src="js/register_nav.js"></script>
+        <script src="js/body.js"></script>
+
+		<script src="js/DynamicFill.js"></script>
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+</body>
+<script>
+function fabu()
+{
+    var text=$('#myText').val();
+    var user=$('#user')[0].innerHTML.toString();
+    $.post('/fabu',{'username':user.toString(),'text':text.toString()},function(data,status)
+		{
+            if(data=='pass')
+				window.location.href='/';
+
+		})
+    //window.location.href='/';
+}
+</script>
+
+<script>
+function search()
+{
+    var user=$('#search').val();
+    $.post('/search',{'username':user.toString()},function(data,status)
+    {
+        document.write(data)
+    })
+    //window.location.href='/';
+}
+
+function myinfo()
+{
+    var user=document.getElementById("user").innerText;
+    // $.post('/info',{'username':user.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/info?user='+user;
+}
+
+function info()
+{
+    var friend=document.getElementById("friend").innerText;
+    // $.post('/info',{'username':friend.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/info?user='+friend;
+}
+function fabu()
+{
+    var text=$('#myText').val();
+    var user=$('#user')[0].innerHTML.toString();
+    $.post('/fabu',{'username':user.toString(),'text':text.toString()},function(data,status)
+		{
+            if(data=='pass')
+				window.location.href='/';
+
+		})
+    //window.location.href='/';
+}
+</script>
+</html>

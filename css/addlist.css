@@ -1,0 +1,299 @@
+body {
+	background-color: #f3f3f3;
+}
+li {
+	cursor: pointer;
+}
+
+.side-left {
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255,255,255,.2);
+}
+.side-left li {
+	padding: 6px;
+	padding-left: 12px;
+	
+	font-size: .9em;
+	font-weight: 700;
+	
+	color: black;
+}
+.side-left li:first-child {
+	background-color: rgba(255,255,255,.2);
+	
+}
+.side-left li:hover {
+	background-color: rgba(255,255,255,.2);
+}
+.side-sec li {
+	
+	
+	font-size: .9em;
+	font-weight: 700;
+	
+	color: black;
+}
+.side-sec li.sec {
+	
+	padding: 4px 4px 4px 30px;
+	
+}
+/*.side-sec li.sec:hover {
+	background-color: rgba(255,255,255,.2);
+	
+}*/
+#xiaLa {
+	display: inline-block;
+	
+	transition: .5s;
+}
+.fu-bu {
+	padding: 6px;
+	margin-bottom: 10px;
+	border-radius: 8px;
+	border: 1px solid #d3d3d3;
+	background-color: white;
+	height:250px;
+}
+.fu-bu b {
+	font-size: 15px;
+	font-weight: 700;
+	
+	color: #000000;
+}
+.fu-bu textarea {
+	padding-top: 0;
+	
+	font-size: 14px;
+	border: 1px solid #000000;
+	outline: none;
+}
+.fu-bu textarea:focus {
+	border: 1.8px solid #58ACFA;
+}
+#myText {
+	width: 100%;
+	height: 150px;
+	border-radius:5px;
+}
+.fu-bu span {
+	display: inline-block;
+	
+	font-style: normal;
+	font-size: 12px;
+	
+	width: 20px;
+	height: 24px;
+	
+	padding: 4px 4px 4px 30px;
+	background-image: url(../img/main_images/表情.png);
+	background-repeat: no-repeat;
+	background-position: 6px 6px;
+}
+.juli {
+	margin-top: 8px;
+}
+#Send {
+	
+	position:absolute;
+	top:205px;
+	right:40px;
+
+}
+
+.remen {
+	position: relative;
+	
+	margin-top: 0px;
+	padding-top: 10px;
+	margin-left:26%;
+	border-radius: 4px;
+	width:80%;
+	background-color: white;
+	border: 1px solid #d8d8d8;
+}
+
+.remen img {
+	position: absolute;
+	top: 20px;
+	left: 10px;
+	height:48px;
+	width:48px;
+	transition: 1s;
+	transition-timing-function: ease;
+}
+.remen-inner {
+	margin: auto;
+	padding: 10px 10px 6px 60px;
+	
+	width: 96%;
+	
+
+	background-repeat: no-repeat;
+	background-position: 8px 9px;
+}
+/*.one {
+	background-image: url(../img/main_images/1.png);
+	
+}
+.two {
+	background-image: url(../img/main_images/2.png);
+	
+}
+.three {
+	background-image: url(../img/main_images/3.png);
+	
+}
+.four {
+	background-image: url(../img/main_images/4.png);
+	
+}
+.fiv {
+	background-image: url(../img/main_images/5.png);
+	
+}
+.six {
+	background-image: url(../img/main_images/6.png);
+	
+}
+.sev {
+	background-image: url(../img/main_images/7.png);
+	
+}
+.eig {
+	background-image: url(../img/main_images/8.png);
+	
+}
+.nin {
+	background-image: url(../img/main_images/9.png);
+	
+}
+.ten {
+	background-image: url(../img/main_images/10.png);
+	
+}*/
+.remen-inner span:first-child {
+	display: block;
+	
+	margin-bottom: -2px;
+	
+	font-size: 16px;
+	font-weight: 700;
+}
+.time {
+	font-size: 12px;
+	
+	color: #767172;
+}
+.remen ul {
+	list-style: none;
+	
+	display: inline-block;
+	
+	margin-bottom: 0;
+	padding: 0;
+	
+	width: 100%;
+}
+.remen ul li {
+	display: inline-block;
+	
+	width: 32%;
+	padding: 8px 20px;
+	
+	font-size: 12px;
+	color: #767172 ;
+	text-align: center;
+}
+.remen ul li span{
+	display: inline-block;
+	
+	padding: 4px 4px 4px 20px;
+	
+
+	background-repeat: no-repeat;
+	background-position: left;
+	
+}
+.zhuan {
+	background-image: url(../img/main_images/转发.png);
+}
+.ping {
+	background-image: url(../img/main_images/评论.png);
+	
+}
+.dian {
+	background-image: url(../img/main_images/点赞.png);
+	
+}
+.ye {
+	margin-top: 10px;
+	
+}
+.ye input {
+	width: 26px;
+	height: 26px;
+	
+	text-align: center;
+	
+}
+#faSuccess {
+	visibility: hidden;
+	
+	position: absolute;
+	top: 50px;
+	left: 50%;
+	
+	animation-name: mo;
+	animation-duration: 1s;
+	animation-timing-function: ease;
+}
+@keyframes zoom{
+	from {
+		visibility: visible;
+		transform: scale(.2);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+.guan-zhu {
+	margin-top: 20px;
+	
+	transition: .6s;
+}
+.guan-zhu li {
+	padding: 2px 2px 2px 20px;
+	
+	background-image: url(../img/Register-img/yonghu.png);
+	background-repeat: no-repeat;
+	background-position: left;
+}
+.name {
+	display: block;
+	
+	margin-bottom: 0px;
+	margin-left:0px;
+	margin-top:2px;
+	font-size: 20px;
+	font-weight: 700;
+	
+	transition: .5s;
+}
+.name:hover {
+	cursor: pointer;
+	
+	text-shadow: 0px 0px 4px rgba(0,0,0,.7);
+	
+}
+.my-id {
+	visibility: hidden;
+}
+
+
+
+.dingwei {
+	position: fixed;
+	top: 60px;
+	left: 80px;
+}
