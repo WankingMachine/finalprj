@@ -120,7 +120,7 @@ router.get('/',async (ctx,next)=>{
     // friends.push(message('Jing_Mini_Shop','2018年11月3号','IG夺冠了！'));
     // friends.push(message('Jing_Mini_Shop','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
     user="Jing_Mini_Shop";
-    var result =await client.query("webo",'select ?attentionuser ?x ?text ?data ?dianzan where\
+    var result =await client.query("webo",'select ?attentionuser ?weiboid ?text ?data ?dianzan where\
     {\
         ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".	\
         ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
@@ -129,15 +129,24 @@ router.get('/',async (ctx,next)=>{
         ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?attentionId.\
         ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	?attentionuser.\
         ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	?attentionId.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>    ?weiboid.\
 	    ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	?text;\
 		<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>	?data;\
 		<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_attitudesnum>	?dianzan.\
     }'
     );
     result=result["results"]["bindings"];
+    index=[]
     for (let i=0;i<result.length;i++)
     {
-        friends.push((weibo(result[i]["attentionuser"]['value'],result[i]["data"]['value'],result[i]["text"]['value'])));
+        index.push([i,parseInt(result[i]["weiboid"]["value"])]);
+    }
+    index.sort(function(a,b){
+        return b[1]-a[1];
+    })
+    for (let i=0;i<result.length;i++)
+    {
+        friends.push((weibo(result[index[i][0]]["attentionuser"]['value'],result[index[i][0]]["data"]['value'],result[index[i][0]]["text"]['value'])));
     }
     let myid=user;
     let owner=true;
