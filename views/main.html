@@ -143,11 +143,11 @@ function fabu()
 function search()
 {
     var user=$('#search').val();
-    $.post('/search',{'username':user.toString()},function(data,status)
-    {
-        document.write(data)
-    })
-    //window.location.href='/';
+    // $.post('/search',{'username':user.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/info?user='+user;
 }
 
 function myinfo()
