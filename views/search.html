@@ -90,9 +90,9 @@
                         <img  src='img/avtar.png' >
                             <p class="name" id="friend" onclick="info()" style="width:50%;float:left" ><%=friends[i]['name']%></p>
                             <% if(!focus){%>
-                            <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">关注</p>
+                            <p class="name" style="width:50%;float:left" align="right" onclick="attention(<%=focus%>)">关注</p>
                             <%}else{%>
-                            <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">取消关注</p>
+                            <p class="name" style="width:50%;float:left" align="right" onclick="attention(<%=focus%>)">取消关注</p>
                             <%}%>
                             <p>性别：<%=friends[i]['gender']%></p>
                             <p>注册地：<%=friends[i]['birth']%></p>
@@ -156,6 +156,17 @@ function myinfo()
         document.write(data)
     })
     //window.location.href='/';
+}
+
+function attention(focus)
+{
+    var user=document.getElementById("friend").innerText;
+    // $.post('/info',{'username':friend.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    //window.location.href='/';
+    window.location.href='/attention?user='+user+'&focus='+focus;
 }
 </script>
 
