@@ -80,28 +80,33 @@
                             </li>
                             
                         </ul>
-                <% for(var i=0;i<friends.length;i++){%>
-                <div class="remen">
-                    
-                    <div class="remen-inner one">
-                    <img  src='img/avtar.png' >
-                        <p class="name" id="friend" onclick="info()" style="width:50%;float:left" ><%=friends[i]['name']%></p>
-                        <% if(!focus){%>
-                        <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">关注</p>
-                        <%}else{%>
-                        <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">取消关注</p>
-                        <%}%>
-                        <p>性别：<%=friends[i]['gender']%></p>
-                        <p>注册地：<%=friends[i]['birth']%></p>
+                <%if (friends == null) {%>
+                    <p>用户不存在！</p>
+                <%}else{%>
+                    <% for(var i=0;i<friends.length;i++){%>
+                    <div class="remen">
+                        
+                        <div class="remen-inner one" style="background:#F00">
+                        <img  src='img/avtar.png' >
+                            <p class="name" id="friend" onclick="info()" style="width:50%;float:left" ><%=friends[i]['name']%></p>
+                            <% if(!focus){%>
+                            <p class="name" style="width:50%;float:left" align="right" onclick="attention(<%=focus%>)">关注</p>
+                            <%}else{%>
+                            <p class="name" style="width:50%;float:left" align="right" onclick="attention(<%=focus%>)">取消关注</p>
+                            <%}%>
+                            <p>性别：<%=friends[i]['gender']%></p>
+                            <p>注册地：<%=friends[i]['birth']%></p>
+                        </div>
+                        <ul>
+                            <li><span >&nbsp</span></li>
+                            <li><span style="font-size:13px;color:black">关注数量:</span><%=friends[i]['fav']%></li>
+                            <li><span style="font-size:13px;color:black">粉丝数量:</span><%=friends[i]['fans']%></li>
+                        </ul>
+                        <!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
                     </div>
-                    <ul>
-                        <li><span >&nbsp</span></li>
-                        <li><span style="font-size:13px;color:black">关注数量:</span><%=friends[i]['fav']%></li>
-                        <li><span style="font-size:13px;color:black">粉丝数量:</span><%=friends[i]['fans']%></li>
-                    </ul>
-                    <!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
-                </div>
+                    <% }%>
                 <% }%>
+
                
 
                 <p class="ye"></p>
@@ -151,6 +156,17 @@ function myinfo()
         document.write(data)
     })
     //window.location.href='/';
+}
+
+function attention(focus)
+{
+    var user=document.getElementById("friend").innerText;
+    // $.post('/info',{'username':friend.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    //window.location.href='/';
+    window.location.href='/attention?user='+user+'&focus='+focus;
 }
 </script>
 
