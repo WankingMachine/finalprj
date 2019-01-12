@@ -1,7 +1,7 @@
 const Koa = require('koa2')
 const fs = require('fs');
 const zqj=require('./js/zqj')
-var num=BigInt('10000000012');
+var num=BigInt('10000000013');
 var wnum=BigInt('50000000000000110');
 const GStoreClient = require("./index.js");
 const client = new GStoreClient(
@@ -140,7 +140,7 @@ router.get('/',async (ctx,next)=>{
     {
         index.push([i,parseInt(result[i]["weiboid"]["value"])]);
     }
-    user='zqj';
+    user='qqq';
     var result2=await client.query("webo",'select ?text ?weiboid ?data ?dianzan where\
     {\
         ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".\
