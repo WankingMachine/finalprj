@@ -32,7 +32,7 @@
                 <input type="text" placeholder="输入你要查找的用户ID" name="search" id="search" />
 
                 <a href="#" class="en">
-                    <img src="img/Register-img/search2.png" alt="" onclick='alert("sb")'/>
+                    <img src="img/Register-img/search2.png" alt="" onclick="search()"/>
                 </a>
 
             </div>
@@ -84,7 +84,7 @@
                     <p>用户不存在！</p>
                 <%}else{%>
                     <% for(var i=0;i<friends.length;i++){%>
-                    <div class="remen">
+                    <div class="remen" style="background:#F00">
                         
                         <div class="remen-inner one" style="background:#F00">
                         <img  src='img/avtar.png' >
@@ -136,7 +136,15 @@
 </body>
 
 <script>
-
+function search()
+{
+    var user=$('#search').val();
+    // $.post('/search',{'username':user.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/search?user='+user;
+}
 function info()
 {
     var friend=document.getElementById("friend").innerText;

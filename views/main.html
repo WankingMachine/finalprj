@@ -86,7 +86,7 @@
 					
 					<div class="remen-inner one">
                     <img  src='img/avtar.png'>
-						<span id= 'friend' class="name" onclick="info()"><%=friends[i]['name']%></span>
+						<span id= 'friend' class="name" onclick="info(this)"><%=friends[i]['name']%></span>
 						<span class="time"><%=friends[i]['time']%> </span>
 						<p><%=friends[i]['text']%></p>
 					</div>
@@ -160,13 +160,14 @@ function myinfo()
     window.location.href='/info?user='+user;
 }
 
-function info()
+function info(e)
 {
-    var friend=document.getElementById("friend").innerText;
+    var friend = e.innerHTML
     // $.post('/info',{'username':friend.toString()},function(data,status)
     // {
     //     document.write(data)
     // })
+    alert(friend)
     window.location.href='/info?user='+friend;
 }
 function fabu()

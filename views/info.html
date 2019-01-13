@@ -32,7 +32,7 @@
                 <input type="text" placeholder="输入你要查找的用户ID" name="search" id="search" />
 
                 <a href="#" class="en">
-                    <img src="img/Register-img/search2.png" alt="" onclick='alert("sb")'/>
+                    <img src="img/Register-img/search2.png" alt="" onclick="search()"/>
                 </a>
 
             </div>
@@ -42,7 +42,7 @@
                     <li>
                         <a href="#">
                             <img src="img/Register-img/yonghu.png" alt="" style="vertical-align: text-top" />&nbsp;&nbsp;
-                            <span>zqj</span>
+                            <span id='user' onclick="myinfo()"><%=myid%></span>
                         </a>
                     </li>
                 </ul>
@@ -57,7 +57,7 @@
                 <div class="dingwei">
                 <ul class="side-left">
                     <li onclick="window.location.href='/';" class="shou-ye">首页</li>
-                    <% if(owner){%>
+                    <% if(myself){%>
                         <li onclick="window.location.href='/addlist';">我的关注</li>
                         <li>我的赞</li>
                         <%}else{%>
@@ -82,12 +82,12 @@
                         </ul>
                 <% for(var i=0;i<friends.length;i++){%>
                 <% if(myself){%>
-                <div class="remen ">
+                <div class="remen " style="background:#F00">
                     
-                    <div class="remen-inner one">
+                    <div class="remen-inner one" style="background:#F00">
                     <img  src='img/avtar.png'>
                         <span class="name" onclick="my(this)"><%=friends[i]['name']%></span>
-                        <div>
+                        <div >
                         <p style="width:15%;float:left">性别：</p>
                         <td style="width:85%;float:left"><!--单元格开始-->
                         <select><!下拉框控件>
@@ -97,9 +97,8 @@
                         </select>
                         </td>
                         </div>
-                        <div >
-                        <p style="width:15%">生日：</p>
-                        <input type="date" style="width:85%;float:left" value=<%=friends[i]['birth']%>/>
+                        <div style="width:85%;float:left">
+                        <p style="width:85%;float:left">注册地： <%=friends[i]['birth']%></p>
                         </div>
                         
                         <!-- <p contenteditable='true'>生日：1998-01-01</p>
@@ -117,11 +116,11 @@
                     
                     <div class="remen-inner one">
                     <img  src='img/avtar.png'>
-                        <p class="name" style="width:50%;float:left" onclick="my(this)"><%=friends[i]['name']%></p>
+                        <p class="name" id="friend" style="width:50%;float:left" onclick="my(this)"><%=friends[i]['name']%></p>
                         <% if(!focus){%>
-                        <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">关注</p>
+                        <p class="name" style="width:50%;float:left" align="right" onclick="attention(<%=focus%>)">关注</p>
                         <%}else{%>
-                        <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">取消关注</p>
+                        <p class="name" style="width:50%;float:left" align="right" onclick="attention(<%=focus%>)">取消关注</p>
                         <%}%>
                         <p>性别： <%=friends[i]['gender']%></p>
                         <p>注册地： <%=friends[i]['birth']%></p>
@@ -178,5 +177,36 @@
 
 
 </body>
+
+<script type="text/javascript">
+function search()
+{
+    var user=$('#search').val();
+    // $.post('/search',{'username':user.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/search?user='+user;
+}
+function myinfo()
+{
+    var user=document.getElementById("user").innerText;
+    $.post('/info',{'username':user.toString()},function(data,status)
+    {
+        document.write(data)
+    })
+    //window.location.href='/';
+}
+function attention(focus)
+{
+    var user=document.getElementById("friend").innerText;
+    // $.post('/info',{'username':friend.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    //window.location.href='/';
+    window.location.href='/attention1?user='+user+'&focus='+focus;
+}
+</script>
 
 </html>

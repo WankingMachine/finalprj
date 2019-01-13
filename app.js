@@ -247,8 +247,9 @@ router.get('/info',async (ctx)=>{
     console.log('info!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log(user)
     console.log(zqj.gettime());
-    q = 'select ?gender ?loc ?fans ?fav where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}'
+    q = 'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}'
     var result = await client.query("webo",q);
+    let userId = result["results"]["bindings"][0]["uid"]["value"]
     console.log(q)
     console.log(result)
     // let info=[];
@@ -258,10 +259,28 @@ router.get('/info',async (ctx)=>{
     let friends=[];
     friends.push(message(user,result["results"]["bindings"][0]["gender"]["value"],result["results"]["bindings"][0]["loc"]["value"],
         result["results"]["bindings"][0]["fans"]["value"],result["results"]["bindings"][0]["fav"]["value"]));
+    console.log(friends)
     let myid='zqj';
     let owner=false;
     let myself = true;
-    let focus = true
+    var attention = await client.query("webo",'select  ?attentionId where\
+{\
+	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	\"'+user+'\".	\
+	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
+	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
+	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
+}\
+'
+    );
+    console.log(attention)
+    let attentionlist = [];
+    for (var i=0;i<attention["results"]["bindings"].length;i++)
+	{ 
+    	attentionlist.push(attention["results"]["bindings"][i]["attentionId"]["value"])
+	}
+    let focus = false
+	if (attentionlist.includes(userId))
+		focus = true
     if (user != myid){
         myself = false
     }
@@ -353,7 +372,7 @@ router.get('/attention',async (ctx)=>{
 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation> \
 	}')
     	}
-    console.log('focus = '+focus)
+    console.log('result2 = '+result2)
     let friends=[];
     if (result["results"]["bindings"].length == 0){
     	friends = null
@@ -372,6 +391,60 @@ router.get('/attention',async (ctx)=>{
     console.log(friends)
     await ctx.render('search',{
         friends,myid,owner,focus
+    });
+})	;
+router.get('/attention1',async (ctx)=>{
+    let user=ctx.query['user'];
+    let focus_str=ctx.query['focus']
+    console.log('attention1111!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    console.log('user = '+user)
+    let myid=ctx.cookies.get('cid');
+    console.log(zqj.gettime());
+    console.log('old_focus = '+focus_str)
+    var result = await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
+    console.log(result)
+    let userId = result["results"]["bindings"][0]["uid"]["value"]
+    var result1 = await client.query("webo",'select ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+myid+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.}');
+    let myId =  result1["results"]["bindings"][0]["uid"]["value"]
+    var focus = focus_str === "false" ? false : true;
+
+    if(focus==true){
+    	focus=false
+    	var result2 = await client.query("webo",'delete data\
+	{\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	\"'+userId+'\".\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<http://www.w3.org/2000/01/rdf-schema#label>	"userrelation #'+myId+'/'+userId+'\" .\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	\"'+myId+'\" .\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation> \
+	}')}else{
+    		focus = true
+    		var result3 = await client.query("webo",'insert data\
+	{\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	\"'+userId+'\".\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<http://www.w3.org/2000/01/rdf-schema#label>	"userrelation #'+myId+'/'+userId+'\" .\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	\"'+myId+'\" .\
+	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation> \
+	}')
+    	}
+    console.log('result2 = '+result2)
+    let friends=[];
+    if (result["results"]["bindings"].length == 0){
+    	friends = null
+    }else{
+	    friends.push(message(user,result["results"]["bindings"][0]["gender"]["value"],result["results"]["bindings"][0]["loc"]["value"],
+	        result["results"]["bindings"][0]["fans"]["value"],result["results"]["bindings"][0]["fav"]["value"]));
+    }
+    let myself=false;
+    if (myid==user){
+    	myself = true
+    }
+    // let title = '你好ejs';
+    // let list = ['哈哈','嘻嘻','看看','问问'];
+    // let content = "<h2>这是一个h2</h2>";
+    // let num = 10;
+    console.log(friends)
+    await ctx.render('info',{
+        friends,myid,myself,focus
     });
 })	;
 router.get('/data',async (ctx,next)=>{
