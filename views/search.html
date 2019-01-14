@@ -76,13 +76,13 @@
                             </li>
                             
                         </ul>
-                <%if (friends.length==0) {%>
+                <%if (friends==null) {%>
                     <p>用户不存在！</p>
                 <%}else{%>
                     <% for(var i=0;i<friends.length;i++){%>
-                    <div class="remen" style="background:#F00">
+                    <div class="remen" style="background:#AEEEEE">
                         
-                        <div class="remen-inner one" style="background:#F00">
+                        <div class="remen-inner one" ">
                         <img  src='img/avtar.png' >
                             <p class="name" id="friend" onclick="info()" style="width:50%;float:left" ><%=friends[i]['name']%></p>
                             <% if(!focus){%>

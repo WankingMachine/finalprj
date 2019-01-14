@@ -80,19 +80,26 @@
                         </ul>
                 <% for(var i=0;i<friends.length;i++){%>
                 <% if(myself){%>
-                <div class="remen " style="background:#F00">
+                <div class="remen " style="background:#AEEEEE">
                     
-                    <div class="remen-inner one" style="background:#F00">
+                    <div class="remen-inner one" >
                     <img  src='img/avtar.png'>
                         <span class="name" onclick="my(this)"><%=friends[i]['name']%></span>
                         <div >
                         <p style="width:15%;float:left">性别：</p>
                         <td style="width:85%;float:left"><!--单元格开始-->
                         <select><!下拉框控件>
-                       
+                        
                         <option value = "1">男</option>
                         <option value = "2">女</option>
                         </select>
+                        <script type="text/javascript">
+                        if (friends[i]['gender']=='f') {
+                            document.getElementById("sel")[2].selected=true %>
+                        }else {
+                            document.getElementById("sel")[1].selected=true %>
+                        }      
+                        </script>
                         </td>
                         <p style="width:85%;float:left">&nbsp</p>
                         <p style="width:85%;float:left">注册地： <%=friends[i]['birth']%></p>
@@ -112,7 +119,7 @@
                     <!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
                 </div>
                 <%}else{%>
-                <div class="remen " style="background:#F00">
+                <div class="remen " style="background:#AEEEEE">
                     
                     <div class="remen-inner one">
                     <img  src='img/avtar.png'>
@@ -134,14 +141,14 @@
                 </div>
                 <%}%>
                 <%}%>
-                <% for(var i=0;i<friends.length;i++){%>
+                <% for(var i=0;i<weibos.length;i++){%>
                 <div class="remen">
                     
                     <div class="remen-inner one">
                     <img  src='img/avtar.png'>
-                        <span class="name" onclick="my(this)"><%=friends[i]['name']%></span>
-                        <span class="time">111</span>
-                        <p>111</p>
+                        <span id= 'friend' class="name" onclick="info(this)"><%=weibos[i]['name']%></span>
+                        <span class="time"><%=weibos[i]['time']%> </span>
+                        <p><%=weibos[i]['text']%></p>
                     </div>
                     <ul>
                         <li><span class="zhuan">1</span></li>
@@ -191,11 +198,11 @@ function search()
 function myinfo()
 {
     var user=document.getElementById("user").innerText;
-    $.post('/info',{'username':user.toString()},function(data,status)
-    {
-        document.write(data)
-    })
-    //window.location.href='/';
+    // $.post('/info',{'username':user.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/info?user='+user;
 }
 function attention(focus)
 {
@@ -206,6 +213,10 @@ function attention(focus)
     // })
     //window.location.href='/';
     window.location.href='/attention1?user='+user+'&focus='+focus;
+}
+function editMyinfo()
+{
+
 }
 </script>
 

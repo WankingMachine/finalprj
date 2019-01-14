@@ -275,8 +275,57 @@ router.get('/info',async (ctx,next)=>{
     if (user != myid){
         myself = false
     }
+    let weibos=[];
+    // friends.push(message('Jing_Mini_Shop','2018年1月1号','我的第一条微博消息!'));
+    // friends.push(message('Jing_Mini_Shop','2018年11月3号','IG夺冠了！'));
+    // friends.push(message('Jing_Mini_Shop','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
+    var result =await client.query("webo",'select ?attentionuser ?weiboid ?text ?data ?dianzan where\
+    {\
+        ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    "'+user+'". \
+        ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?id.\
+        ?relation   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>    ?id.\
+        ?relation   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>    ?attentionId.\
+        ?y  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?attentionId.\
+        ?y  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    ?attentionuser.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>    ?attentionId.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>    ?weiboid.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>   ?text;\
+        <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>   ?data;\
+    }'
+    );
+    result=result["results"]["bindings"];
+    index=[]
+    for (let i=0;i<result.length;i++)
+    {
+        index.push([i,parseInt(result[i]["weiboid"]["value"])]);
+    }
+    var result2=await client.query("webo",'select ?text ?weiboid ?data ?dianzan where\
+    {\
+        ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    "'+user+'".\
+        ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?id.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>    ?id.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>    ?weiboid.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>   ?text;\
+            <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>   ?data;\
+    }');
+    result2=result2["results"]["bindings"];
+    l=result.length;
+    for (let i=0;i<result2.length;i++)
+    {
+        result2[i]['attentionuser']={'value':user};
+        result.push(result2[i]);
+        index.push([l+i,parseInt(result2[i]["weiboid"]["value"])]);
+    }
+    index.sort(function(a,b){
+        return b[1]-a[1];
+    })
+    for (let i=0;i<result.length;i++)
+    {
+            weibos.push(weibo(result[index[i][0]]['attentionuser']['value'],result[index[i][0]]["data"]['value'],result[index[i][0]]["text"]['value']));
+    }
+
     await ctx.render('info',{
-        friends,myid,owner,myself,focus
+        friends,myid,owner,myself,focus,weibos
     });
     await next(); 
 });
@@ -286,8 +335,11 @@ router.get('/search',async (ctx,next)=>{
     console.log('search!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log(user)
     console.log(zqj.gettime());
+    let myid=ctx.cookies.get('cid');
+    let owner=true;
+    let focus = true
+
     var result = await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
-    let userId = result["results"]["bindings"][0]["uid"]["value"]
     console.log(result)
     let friends=[];
     if (result["results"]["bindings"].length == 0){
@@ -307,20 +359,25 @@ router.get('/search',async (ctx,next)=>{
 }\
 '
     );
+    console.log('friends ='+friends)
+    if (friends == null) {
+        await ctx.render('search',{
+        friends,myid,owner,focus
+    });
+    } else {
+        let userId = result["results"]["bindings"][0]["uid"]["value"]
+
     console.log(attention)
     let attentionlist = [];
     for (var i=0;i<attention["results"]["bindings"].length;i++)
-	{ 
-    	attentionlist.push(attention["results"]["bindings"][i]["attentionId"]["value"])
-	}
-    let focus = false
-	if (attentionlist.includes(userId))
-		focus = true
+    { 
+        attentionlist.push(attention["results"]["bindings"][i]["attentionId"]["value"])
+    }
+    if (attentionlist.includes(userId))
+        focus = true
 
-    let myid=ctx.cookies.get('cid');
-    let owner=false;
     if (myid==user){
-    	owner = true
+        owner = true
     }
     // let title = '你好ejs';
     // let list = ['哈哈','嘻嘻','看看','问问'];
@@ -331,6 +388,9 @@ router.get('/search',async (ctx,next)=>{
     await ctx.render('search',{
         friends,myid,owner,focus
     });
+    }
+
+    
 });
 router.get('/attention',async (ctx,next)=>{
     let user=ctx.query['user'];
