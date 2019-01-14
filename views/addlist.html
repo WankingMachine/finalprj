@@ -133,7 +133,10 @@ function attention(obj)
     var user=window.location.href;
     user=user.substring(user.indexOf('=')+1);
     alert($(obj).parent().find('p')[0].innerHTML);
-    $.post('/attention',{'user':user,},)
+    $.post('/attention',{'user':user,},function()
+    {
+        window.location.href=('/search?user='+$('#friend')[0].innerHTML);
+    })
     //window.location.href='/addlist?user='+user;
 }
 </script>
