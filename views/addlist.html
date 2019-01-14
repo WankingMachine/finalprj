@@ -41,12 +41,8 @@
                 <ul>
                     <li>
                         <a href="#">
-                            <img src="img/Register-img/yonghu.png" alt="" style="vertical-align: text-top" />&nbsp;&nbsp;
-                            <%if(owner){%>
-                            <span><%=myid%></span>
-                            <%}else{%>
-                            <span>未登录</span>
-                            <%}%>
+                            <img src="img/Register-img/yonghu.png" onclick="myinfo()" alt="" style="vertical-align: text-top" />&nbsp;&nbsp;
+                            <span id='user' onclick="myinfo()"><%=myid%></span>
                         </a>
                     </li>
                 </ul>
@@ -84,28 +80,27 @@
                             </li>
                             
                         </ul>
-                <% for(var i=0;i<friends.length;i++){%>
-				<div class="remen">
-					
-					<div class="remen-inner one">
-                    <img  src='img/avtar.png'>
-                    <p class="name" style="width:50%;float:left" onclick="my(this)"><%=friends[i]['name']%></p>
-                        <%if(owner){%>
-                            <p class="name" style="width:50%;float:left" align="right" onclick="my(this)">关注</p>
-                             <%}%>
-                        <p>个人简介：这个人很懒，什么都没有留下</p>
-                       
-                    </div>
-                    
-					<ul>
-						<li><span >&nbsp</span></li>
-						<li><span style="font-size:13px;color:black">关注数量:</span>2</li>
-						<li><span style="font-size:13px;color:black">粉丝数量:</span>2</li>
-					</ul>
-					<!-- <img src="img/main_images/加好友.png"  onclick="myJia(this)" /> -->
-                </div>
-
-                <% }%>
+                        <% for(var i=0;i<friends.length;i++){%>
+                            <div class="remen" style="background:#ffffff">
+                                
+                                <div class="remen-inner one" style="background:#ffffff">
+                                <img  src='img/avtar.png' >
+                                    <p class="name" id="friend" onclick="info()" style="width:50%;float:left" ><%=friends[i]['name']%></p>
+                                    <%if(owner){%>
+                                    <p class="name" style="width:50%;float:left" align="right" onclick="attention(this)">取消关注</p>
+                                    <%}else{%>
+                                    <p class="name" style="width:50%;float:left" align="right" >&nbsp</p>
+                                    <%}%>
+                                    <p>性别：<%=friends[i]['gender']%></p>
+                                    <p>注册地：<%=friends[i]['birth']%></p>
+                                </div>
+                                <ul>
+                                    <li><span >&nbsp</span></li>
+                                    <li><span style="font-size:13px;color:black">关注数量:</span><%=friends[i]['fav']%></li>
+                                    <li><span style="font-size:13px;color:black">粉丝数量:</span><%=friends[i]['fans']%></li>
+                                </ul>
+                            </div>
+                            <% }%>
 
 				<p class="ye"></p>
 			</div>
@@ -132,5 +127,14 @@
 
 
 </body>
-
+<script>
+function attention(obj)
+{
+    var user=window.location.href;
+    user=user.substring(user.indexOf('=')+1);
+    alert($(obj).parent().find('p')[0].innerHTML);
+    $.post('/attention',{'user':user,},)
+    //window.location.href='/addlist?user='+user;
+}
+</script>
 </html>

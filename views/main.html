@@ -58,10 +58,10 @@
                 <ul class="side-left">
                     <li onclick="window.location.href='/';" class="shou-ye">首页</li>
                     <% if(owner){%>
-                        <li onclick="window.location.href='/addlist';">我的关注</li>
+                        <li onclick="window.location.href=('/addlist?user='+'<%=myid%>')"> 我的关注</li>
                     <li>我的赞</li>
                     <%}else{%>
-                        <li onclick="window.location.href='/addlist';">我的关注</li>
+                        <li onclick="window.location.href=('/addlist?user='+$('#friend')[0].innerHTML);">他的关注</li>
                     <li>他的赞</li>
                     <%}%>
                 </ul>

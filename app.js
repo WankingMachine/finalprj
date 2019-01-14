@@ -25,7 +25,7 @@ app.use(async (ctx,next)=>{
     // 继续向下匹配路由
     await next(); 
 });
-function message(name,gender,time,fans,fav)
+function message(name,gender,time,fans,fav,focus=false)
 {
     one={};
     one['name']=name;
@@ -33,6 +33,7 @@ function message(name,gender,time,fans,fav)
     one['birth']=time;
     one['fans']=fans;
     one['fav']=fav;
+    one['focus']=focus;
     return one;
 }
 function weibo(name,time,text)
@@ -109,7 +110,9 @@ router.post('/register',async (ctx,next)=>{
 )
 router.get('/',async (ctx,next)=>{
     let user=ctx.cookies.get('cid');
+    console.log(user)
     user=decodeURIComponent(user);
+    console.log(user)
     await next();
     if(!isuser(user))
     ctx.response.redirect('/login.html')
@@ -119,7 +122,6 @@ router.get('/',async (ctx,next)=>{
     // friends.push(message('Jing_Mini_Shop','2018年1月1号','我的第一条微博消息!'));
     // friends.push(message('Jing_Mini_Shop','2018年11月3号','IG夺冠了！'));
     // friends.push(message('Jing_Mini_Shop','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
-    user="Jing_Mini_Shop";
     var result =await client.query("webo",'select ?attentionuser ?weiboid ?text ?data ?dianzan where\
     {\
         ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".	\
@@ -140,7 +142,6 @@ router.get('/',async (ctx,next)=>{
     {
         index.push([i,parseInt(result[i]["weiboid"]["value"])]);
     }
-    user=ctx.cookies.get('cid');
     var result2=await client.query("webo",'select ?text ?weiboid ?data ?dianzan where\
     {\
         ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".\
@@ -203,45 +204,33 @@ router.post('/fabu',async (ctx,next)=>{
 });
 router.get('/addlist',async (ctx)=>{
     let user=ctx.query['user'];
+    let myid=ctx.cookies.get('cid');
+    myid=decodeURIComponent(myid);
     console.log(user)
     console.log(zqj.gettime());
     let friends=[];
-    friends.push(message('Jing_Mini_Shop','2018年1月1号','我的第一条微博消息!'));
-    friends.push(message('Jing_Mini_Shop','2018年11月3号','IG夺冠了！'));
-    friends.push(message('Jing_Mini_Shop','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
-    let myid='zqj';
-    let owner=true;
+    var result = await client.query("webo",'select ?name ?gender ?loc ?fans ?fav ?uid \
+    where{?i	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".\
+	?i	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
+	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
+	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
+    ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?attentionId.\
+    ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name> ?name.\
+    ?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.\
+    ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.\
+    ?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.\
+    ?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
+    for(let i=0;i<result['results']['bindings'].length;i++)
+    {
+    friends.push(message(result["results"]["bindings"][i]["name"]["value"],result["results"]["bindings"][i]["gender"]["value"],result["results"]["bindings"][i]["loc"]["value"],
+    result["results"]["bindings"][i]["fans"]["value"],result["results"]["bindings"][i]["fav"]["value"]));
+    }
+    let owner=(user==myid)
     await ctx.render('addlist',{
         friends,myid,owner
     });
 });
-// router.post('/info',async (ctx)=>{
-//     let user=ctx.request.body.username;
-//     console.log('info!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-//     console.log(user)
-//     console.log(zqj.gettime());
-//     q = 'select ?gender ?loc ?fans ?fav where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}'
-//     var result = await client.query("webo",q);
-//     console.log(q)
-//     console.log(result)
-//     // let info=[];
-//     // search.push(message('张三','2018年1月1号','我的第一条微博消息!'));
-//     //friends.push(message('张三丰','2018年11月3号','IG夺冠了！'));
-//     //friends.push(message('张三的爸爸','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
-//     let friends=[];
-//     friends.push(message(user,result["results"]["bindings"][0]["gender"]["value"],result["results"]["bindings"][0]["loc"]["value"],
-//         result["results"]["bindings"][0]["fans"]["value"],result["results"]["bindings"][0]["fav"]["value"]));
-//     let myid='zqj';
-//     let owner=false;
-//     let myself = true;
-//     let focus = true
-//     if (user != myid){
-//         myself = false
-//     }
-//     await ctx.render('info',{
-//         friends,myid,owner,myself,focus
-//     });
-// });
+
 router.get('/info',async (ctx)=>{
     let user=ctx.query['user'];
     console.log('info!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -260,7 +249,8 @@ router.get('/info',async (ctx)=>{
     friends.push(message(user,result["results"]["bindings"][0]["gender"]["value"],result["results"]["bindings"][0]["loc"]["value"],
         result["results"]["bindings"][0]["fans"]["value"],result["results"]["bindings"][0]["fav"]["value"]));
     console.log(friends)
-    let myid='zqj';
+    let myid=ctx.cookies.get('cid');
+    myid=decodeURIComponent(myid);
     let owner=false;
     let myself = true;
     var attention = await client.query("webo",'select  ?attentionId where\
@@ -467,7 +457,20 @@ router.get('/data',async (ctx,next)=>{
 	// 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_attitudesnum>	?dianzan.\
     // }'
     // );
-    var result=await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    "吸血鬼日记".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
+    var result =await client.query("webo",'select ?attentionuser ?weiboid ?text ?data ?dianzan where\
+    {\
+        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"zqj".	\
+        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
+        ?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
+        ?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
+        ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?attentionId.\
+        ?y	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	?attentionuser.\
+        ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	?attentionId.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>    ?weiboid.\
+	    ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	?text;\
+		<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>	?data;\
+    }'
+    );
     ctx.response.body=result;
     console.log('test');
     await next(); 
