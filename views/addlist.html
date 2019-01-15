@@ -32,7 +32,7 @@
                 <input type="text" placeholder="输入你要查找的用户ID" name="search" id="search" />
 
                 <a href="#" class="en">
-                    <img src="img/Register-img/search2.png" alt="" onclick='alert("sb")'/>
+                    <img src="img/Register-img/search2.png" alt="" onclick="search()"/>
                 </a>
 
             </div>
@@ -57,7 +57,7 @@
 				<div class="dingwei">
                 <ul class="side-left">
                     <li onclick="window.location.href='/';" class="shou-ye">首页</li>
-                    <% if(owner){%>
+                    <% if(myself){%>
                         <li onclick="window.location.href='/addlist';">我的关注</li>
                         <li>我的赞</li>
                         <%}else{%>
@@ -85,8 +85,8 @@
                                 
                                 <div class="remen-inner one" style="background:#ffffff">
                                 <img  src='img/avtar.png' >
-                                    <p class="name" id="friend" onclick="info()" style="width:50%;float:left" ><%=friends[i]['name']%></p>
-                                    <%if(owner){%>
+                                    <p class="name" id="friend" onclick="info(this)" style="width:50%;float:left" ><%=friends[i]['name']%></p>
+                                    <%if(myself){%>
                                     <p class="name" style="width:50%;float:left" align="right" onclick="attention(this)">取消关注</p>
                                     <%}else{%>
                                     <p class="name" style="width:50%;float:left" align="right" >&nbsp</p>
@@ -132,12 +132,37 @@ function attention(obj)
 {
     var user=window.location.href;
     user=user.substring(user.indexOf('=')+1);
-    alert($(obj).parent().find('p')[0].innerHTML);
-    $.post('/attention',{'user':user,},function()
-    {
-        window.location.href=('/search?user='+$('#friend')[0].innerHTML);
-    })
+    user=$(obj).parent().find('p')[0].innerHTML
+    window.location.href='/attention2?user='+user+'&focus='+true;
     //window.location.href='/addlist?user='+user;
+}
+function search()
+{
+    var user=$('#search').val();
+    // $.post('/search',{'username':user.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/search?user='+user;
+}
+function myinfo()
+{
+    var user=document.getElementById("user").innerText;
+    // $.post('/info',{'username':user.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/info?user='+user;
+}
+
+function info(e)
+{
+    var friend = e.innerHTML
+    // $.post('/info',{'username':friend.toString()},function(data,status)
+    // {
+    //     document.write(data)
+    // })
+    window.location.href='/info?user='+friend;
 }
 </script>
 </html>

@@ -225,9 +225,9 @@ router.get('/addlist',async (ctx,next)=>{
     friends.push(message(result["results"]["bindings"][i]["name"]["value"],result["results"]["bindings"][i]["gender"]["value"],result["results"]["bindings"][i]["loc"]["value"],
     result["results"]["bindings"][i]["fans"]["value"],result["results"]["bindings"][i]["fav"]["value"]));
     }
-    let owner=(user==myid)
+    let myself=(user==myid)
     await ctx.render('addlist',{
-        friends,myid,owner
+        friends,myid,myself
     });
     await next(); 
 });
@@ -256,14 +256,14 @@ router.get('/info',async (ctx,next)=>{
     let myself = true;
     var attention = await client.query("webo",'select  ?attentionId where\
 {\
-	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	\"'+user+'\".	\
+	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	\"'+myid+'\".	\
 	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
 	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
 	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
 }\
 '
     );
-    console.log(attention)
+    //console.log(attention)
     let attentionlist = [];
     for (var i=0;i<attention["results"]["bindings"].length;i++)
 	{ 
@@ -272,6 +272,7 @@ router.get('/info',async (ctx,next)=>{
     let focus = false
 	if (attentionlist.includes(userId))
 		focus = true
+    console.log('attentionlist = ', attentionlist)
     if (user != myid){
         myself = false
     }
@@ -331,7 +332,7 @@ router.get('/search',async (ctx,next)=>{
     // friends.push(message('张三的爸爸','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
     var attention = await client.query("webo",'select  ?attentionId where\
 {\
-	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	\"'+user+'\".	\
+	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	\"'+myid+'\".	\
 	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
 	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
 	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
@@ -345,15 +346,20 @@ router.get('/search',async (ctx,next)=>{
     });
     } else {
         let userId = result["results"]["bindings"][0]["uid"]["value"]
+    console.log('userId = '+userId)
 
-    console.log(attention)
     let attentionlist = [];
     for (var i=0;i<attention["results"]["bindings"].length;i++)
     { 
         attentionlist.push(attention["results"]["bindings"][i]["attentionId"]["value"])
     }
-    if (attentionlist.includes(userId))
+    console.log('attentionlist = ', attentionlist)
+    if (attentionlist.includes(userId)){
         focus = true
+    }else {
+        focus = false
+    }
+
 
     if (myid==user){
         owner = true
@@ -480,6 +486,76 @@ router.get('/attention1',async (ctx)=>{
         friends,myid,myself,focus
     });
 })	;
+router.get('/attention2',async (ctx)=>{
+    let user=ctx.query['user'];
+    let focus_str=ctx.query['focus']
+    console.log('attention2!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    let myid=ctx.cookies.get('cid');
+    console.log(zqj.gettime());
+    console.log('old_focus = '+focus_str)
+    var result = await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
+    console.log(result)
+    let userId = result["results"]["bindings"][0]["uid"]["value"]
+    var result1 = await client.query("webo",'select ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+myid+'\".?o   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?uid.}');
+    let myId =  result1["results"]["bindings"][0]["uid"]["value"]
+    var focus = focus_str === "false" ? false : true;
+
+    if(focus==true){
+        focus=false
+        var result2 = await client.query("webo",'delete data\
+    {\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>    \"'+userId+'\".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <http://www.w3.org/2000/01/rdf-schema#label>    "userrelation #'+myId+'/'+userId+'\" .\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>    \"'+myId+'\" .\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation> \
+    }')}else{
+            focus = true
+            var result3 = await client.query("webo",'insert data\
+    {\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>    \"'+userId+'\".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <http://www.w3.org/2000/01/rdf-schema#label>    "userrelation #'+myId+'/'+userId+'\" .\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>    \"'+myId+'\" .\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#userrelation/'+myId+'/'+userId+'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation> \
+    }')
+        }
+
+    let friends=[];
+    var result = await client.query("webo",'select ?name ?gender ?loc ?fans ?fav ?uid \
+    where{?i    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    "'+myid+'".\
+    ?i  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?id.\
+    ?relation   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>    ?id.\
+    ?relation   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>    ?attentionId.\
+    ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?attentionId.\
+    ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name> ?name.\
+    ?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.\
+    ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.\
+    ?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.\
+    ?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
+    for(let i=0;i<result['results']['bindings'].length;i++)
+    {
+    friends.push(message(result["results"]["bindings"][i]["name"]["value"],result["results"]["bindings"][i]["gender"]["value"],result["results"]["bindings"][i]["loc"]["value"],
+    result["results"]["bindings"][i]["fans"]["value"],result["results"]["bindings"][i]["fav"]["value"]));
+    }
+    let myself=true;
+    if (myid!=user){
+        myself = false
+    }else{
+        myself = true
+    }
+    console.log('user = '+user)
+    
+    console.log('myid = '+myid)
+
+    console.log('myself = '+myself)
+    // let title = '你好ejs';
+    // let list = ['哈哈','嘻嘻','看看','问问'];
+    // let content = "<h2>这是一个h2</h2>";
+    // let num = 10;
+    console.log(friends)
+    await ctx.render('addlist',{
+        friends,myid,myself,focus
+    });
+})  ;
 router.get('/data',async (ctx,next)=>{
     //let user=ctx.cookies.get('cid');
     //var result = await client.query("webo",'insert data{<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>	"m". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>	"浙江 温州". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>	"0". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>	"0". }');
