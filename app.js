@@ -236,7 +236,93 @@ router.get('/addlist',async (ctx,next)=>{
     await next(); 
     
 });
+router.get('/editMyinfo',async (ctx,next)=>{
+    console.log('editMyinfo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    let gender=ctx.query['gender'];
+    let loc=ctx.query['loc'];
+    let myid=ctx.cookies.get('cid');
+    let myself = true
+    myid=decodeURIComponent(myid);
+    console.log(myid)
+    console.log(zqj.gettime());
+    var result1 = await client.query("webo",'select ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+myid+'\".?o   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?uid.}');
+    let myId =  result1["results"]["bindings"][0]["uid"]["value"]
+    console.log(myId)
+    console.log(loc)
+    console.log(gender)
+    var attention = await client.query("webo",'delete where\
+{\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.\
+}\
+'
+    );
+    var attention = await client.query("webo",'insert data\
+{\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> \"'+myId+'\".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    "yaoshaowei".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_password>    "66666".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_birthday>    "1998-09-28".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_text>    "good good study,day day up".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  \"'+gender+'\".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    \"'+loc+'\".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    "0".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   "0".\
+}'
+    );
+    user=myid
+    q = 'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+myid+'\".?o   <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}'
+    var result = await client.query("webo",q);
+    let userId = myId
 
+    // let info=[];
+    // search.push(message('张三','2018年1月1号','我的第一条微博消息!'));
+    //friends.push(message('张三丰','2018年11月3号','IG夺冠了！'));
+    //friends.push(message('张三的爸爸','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
+    let friends=[];
+    friends.push(message(user,result["results"]["bindings"][0]["gender"]["value"],result["results"]["bindings"][0]["loc"]["value"],
+        result["results"]["bindings"][0]["fans"]["value"],result["results"]["bindings"][0]["fav"]["value"]));
+    console.log(friends)
+
+    let owner=false;
+    
+    let focus = false
+
+    if (user != myid){
+        myself = false
+    }
+    let weibos=[];
+    // friends.push(message('Jing_Mini_Shop','2018年1月1号','我的第一条微博消息!'));
+    // friends.push(message('Jing_Mini_Shop','2018年11月3号','IG夺冠了！'));
+    // friends.push(message('Jing_Mini_Shop','2018年6月1号','大三大四工程学造型出现在!萨达斯基的哈设计的还看啥'));
+    let index=[]
+    var result2=await client.query("webo",'select ?text ?weiboid ?data ?dianzan where\
+    {\
+        ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    "'+user+'".\
+        ?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?id.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>    ?id.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>    ?weiboid.\
+        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>   ?text;\
+            <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>   ?data;\
+    }');
+    result2=result2["results"]["bindings"];
+    for (let i=0;i<result2.length;i++)
+    {
+        result2[i]['attentionuser']={'value':user};
+        index.push([i,BigInt(result2[i]["weiboid"]["value"])]);
+    }
+    index.sort(function(a,b){
+        return b[1]-a[1];
+    })
+    for (let i=0;i<result2.length;i++)
+    {
+            weibos.push(weibo(result2[index[i][0]]['attentionuser']['value'],result2[index[i][0]]["data"]['value'],result2[index[i][0]]["text"]['value']));
+    }
+    await ctx.render('info',{
+        friends,myid,owner,myself,focus,weibos
+    });
+    await next(); 
+});
 router.get('/info',async (ctx,next)=>{
     
     let user=ctx.query['user'];
@@ -260,25 +346,9 @@ router.get('/info',async (ctx,next)=>{
     myid=decodeURIComponent(myid);
     let owner=false;
     let myself = true;
-    var attention = await client.query("webo",'select  ?attentionId where\
-{\
-	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	\"'+myid+'\".	\
-	?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
-	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_suid>	?id.\
-	?relation	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/userrelation_tuid>	?attentionId.\
-}\
-'
-    );
-    //console.log(attention)
-    let attentionlist = [];
-    for (var i=0;i<attention["results"]["bindings"].length;i++)
-	{ 
-    	attentionlist.push(attention["results"]["bindings"][i]["attentionId"]["value"])
-	}
+    
     let focus = false
-	if (attentionlist.includes(userId))
-		focus = true
-    console.log('attentionlist = ', attentionlist)
+
     if (user != myid){
         myself = false
     }
@@ -328,7 +398,7 @@ router.get('/search',async (ctx,next)=>{
     let focus = true
 
     var result = await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
-    console.log(result)
+    console.log(result["results"]["bindings"])
     let friends=[];
     if (result["results"]["bindings"].length == 0){
     	friends = null
@@ -401,6 +471,8 @@ router.get('/attention',async (ctx,next)=>{
     var result1 = await client.query("webo",'select ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+myid+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.}');
     let myId =  result1["results"]["bindings"][0]["uid"]["value"]
     var focus = focus_str === "false" ? false : true;
+    console.log('myId = '+myId)
+
 
     if(focus==true){
     	focus=false
@@ -594,39 +666,44 @@ router.get('/data',async (ctx,next)=>{
 	// 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_attitudesnum>	?dianzan.\
     // }'
     // );
-    let user='zqj';
-    var result2=await client.query("webo",'select ?text ?weiboid ?data ?dianzan where\
-    {\
-        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>	"'+user+'".\
-        ?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?id.\
-        ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_uid>	?id.\
-        ?x  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_mid>    ?weiboid.\
-        ?x	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_text>	?text;\
-            <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/weibo_date>	?data;\
-    }');
-    var index=[];
-    var friends=[];
-    var myid=user;
-    owner=false;
-    result2=result2["results"]["bindings"];
-    for (let i=0;i<result2.length;i++)
-    {
-        result2[i]['attentionuser']={'value':user};
-        index.push([i,parseInt(result2[i]["weiboid"]["value"])]);
-    }
-    index.sort(function(b,a){
-        return a[1]-b[1];
-    })
-    for (let i=0;i<result2.length;i++)
-    {
-            friends.push(weibo(result2[index[i][0]]['attentionuser']['value'],result2[index[i][0]]["data"]['value'],result2[index[i][0]]["text"]['value']));
-    }
-    await ctx.render('main',{
-        friends,myid,owner
-    });
-    await next(); 
-    
-}
-)
+    // let user='zqj';
+    // var result2=await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
+    // var index=[];
+    // var friends=[];
+    // var myid=user;
+    // owner=false;
+    // result2=result2["results"]["bindings"];
+    // for (let i=0;i<result2.length;i++)
+    // {
+    //     result2[i]['attentionuser']={'value':user};
+    //     index.push([i,parseInt(result2[i]["weiboid"]["value"])]);
+    // }
+    // index.sort(function(b,a){
+    //     return a[1]-b[1];
+    // })
+    // for (let i=0;i<result2.length;i++)
+    // {
+    //         friends.push(weibo(result2[index[i][0]]['attentionuser']['value'],result2[index[i][0]]["data"]['value'],result2[index[i][0]]["text"]['value']));
+    // }
+    // await ctx.render('main',{
+    //     friends,myid,owner
+    // });
+    // await next(); 
+    myId = '10000000000'
+    var attention = await client.query("webo",'insert data\
+{\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> \"'+myId+'\".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    "zqj".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_password>    "66666".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_birthday>    "1998-09-28".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_text>    "good good study,day day up".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  "f".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    "河南".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    "0".\
+    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/'+myId+'> <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   "0".\
+}'
+    );
+     console.log(attention)
+})
 app.use(router.routes());
 app.listen(3000,function(){console.log('server is starting at port 3000')});

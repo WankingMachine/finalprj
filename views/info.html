@@ -86,23 +86,13 @@
                     <img  src='img/avtar.png'>
                         <span class="name" onclick="my(this)"><%=friends[i]['name']%></span>
                         <div >
-                        <p style="width:15%;float:left">性别：</p>
-                        <td style="width:85%;float:left"><!--单元格开始-->
-                        <select><!下拉框控件>
+                        <p style="width:20%;float:left">性别：</p>
+                        <p id='gender' style="width:80%;float:left" contenteditable="true"> <%=friends[i]['gender']%></p>
                         
-                        <option value = "1">男</option>
-                        <option value = "2">女</option>
-                        </select>
-                        <script type="text/javascript">
-                        if (friends[i]['gender']=='f') {
-                            document.getElementById("sel")[2].selected=true %>
-                        }else {
-                            document.getElementById("sel")[1].selected=true %>
-                        }      
-                        </script>
-                        </td>
-                        <p style="width:85%;float:left">&nbsp</p>
-                        <p style="width:85%;float:left">注册地： <%=friends[i]['birth']%></p>
+                        <p style="width:100%;float:left">&nbsp</p>
+                        <p style="width:20%;float:left"> 注册地： </p>
+                        <p id='loc' style="width:60%;float:left" contenteditable="true"> <%=friends[i]['birth']%></p>
+                        <p> </p> <button type="button" onclick="editMyinfo()" style="background:#AEEEEE">修改 </button>
                         </div>
                         <div style="width:85%;float:left">
                         
@@ -216,8 +206,12 @@ function attention(focus)
 }
 function editMyinfo()
 {
-
+    var gender = document.getElementById("gender").innerText;
+    var loc=document.getElementById("loc").innerText;
+    window.location.href='/editMyinfo?gender='+gender+'&loc='+loc;
 }
+
+
 </script>
 
 </html>
