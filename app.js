@@ -1,8 +1,8 @@
 const Koa = require('koa2')
 const fs = require('fs');
 const zqj=require('./js/zqj')
-var num=BigInt('10000000016');
-var wnum=BigInt('50000000000000115');
+var num=BigInt('10000000200');
+var wnum=BigInt('50000000000001000');
 const GStoreClient = require("./index.js");
 const client = new GStoreClient(
     "root",
@@ -113,7 +113,7 @@ router.get('/',async (ctx,next)=>{
     console.log(user)
     user=decodeURIComponent(user);
     console.log(user)
-    await next();
+    
     if(!isuser(user))
     ctx.response.redirect('/login.html')
     else{
@@ -171,14 +171,16 @@ router.get('/',async (ctx,next)=>{
     await ctx.render('main',{
         friends,myid,owner
     });
+    await next();
 }
 });
 router.post('/fabu',async (ctx,next)=>{
+    
     let user=ctx.cookies.get('cid');
     let text=ctx.request.body.text;
     let time=zqj.gettime();
     user=decodeURIComponent(user);
-    await next();
+    
     if(!isuser(user))
     ctx.response.redirect('/login.html')
     else{
@@ -200,9 +202,11 @@ router.post('/fabu',async (ctx,next)=>{
     console.log('有人发布微博');
     console.log(wnum);
     ctx.response.body='pass';
+    await next();
 }
 });
 router.get('/addlist',async (ctx,next)=>{
+    
     let user=ctx.query['user'];
     let myid=ctx.cookies.get('cid');
     myid=decodeURIComponent(myid);
@@ -230,9 +234,11 @@ router.get('/addlist',async (ctx,next)=>{
         friends,myid,myself
     });
     await next(); 
+    
 });
 
 router.get('/info',async (ctx,next)=>{
+    
     let user=ctx.query['user'];
     console.log('info!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log(user)
@@ -308,14 +314,16 @@ router.get('/info',async (ctx,next)=>{
         friends,myid,owner,myself,focus,weibos
     });
     await next(); 
+    
 });
 router.get('/search',async (ctx,next)=>{
-    await next(); 
+    
     let user=ctx.query['user'];
     console.log('search!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log(user)
     console.log(zqj.gettime());
     let myid=ctx.cookies.get('cid');
+	myid=decodeURIComponent(myid);
     let owner=true;
     let focus = true
 
@@ -374,15 +382,17 @@ router.get('/search',async (ctx,next)=>{
         friends,myid,owner,focus
     });
     }
-
+    await next(); 
     
 });
 router.get('/attention',async (ctx,next)=>{
+    
     let user=ctx.query['user'];
     let focus_str=ctx.query['focus']
     console.log('attention!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log('user = '+user)
     let myid=ctx.cookies.get('cid');
+	myid=decodeURIComponent(myid);
     console.log(zqj.gettime());
     console.log('old_focus = '+focus_str)
     var result = await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
@@ -432,12 +442,14 @@ router.get('/attention',async (ctx,next)=>{
     });
     await next(); 
 })	;
-router.get('/attention1',async (ctx)=>{
+router.get('/attention1',async (ctx,next)=>{
+    await next(); 
     let user=ctx.query['user'];
     let focus_str=ctx.query['focus']
     console.log('attention1111!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log('user = '+user)
     let myid=ctx.cookies.get('cid');
+	myid=decodeURIComponent(myid);
     console.log(zqj.gettime());
     console.log('old_focus = '+focus_str)
     var result = await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid>	?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
@@ -485,12 +497,15 @@ router.get('/attention1',async (ctx)=>{
     await ctx.render('info',{
         friends,myid,myself,focus
     });
+    await next(); 
 })	;
-router.get('/attention2',async (ctx)=>{
-    let user=ctx.query['user'];
-    let focus_str=ctx.query['focus']
+router.post('/attention2',async (ctx,next)=>{
+    
+    let user=ctx.request.body.user;
+    let focus_str=ctx.request.body.focus;
     console.log('attention2!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     let myid=ctx.cookies.get('cid');
+	myid=decodeURIComponent(myid);
     console.log(zqj.gettime());
     console.log('old_focus = '+focus_str)
     var result = await client.query("webo",'select ?gender ?loc ?fans ?fav ?uid where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name>    \"'+user+'\".?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_uid> ?uid.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>  ?gender.?o  <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>    ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>    ?fans.?o    <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>   ?fav.}');
@@ -552,11 +567,14 @@ router.get('/attention2',async (ctx)=>{
     // let content = "<h2>这是一个h2</h2>";
     // let num = 10;
     console.log(friends)
-    await ctx.render('addlist',{
-        friends,myid,myself,focus
-    });
+    // await ctx.render('addlist',{
+    //     friends,myid,myself,focus
+    // });
+    ctx.response.body='niupi';
+    await next(); 
 })  ;
 router.get('/data',async (ctx,next)=>{
+    
     //let user=ctx.cookies.get('cid');
     //var result = await client.query("webo",'insert data{<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender>	"m". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location>	"浙江 温州". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum>	"0". 	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/t_webo.nt#user/10000000006>	<file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum>	"0". }');
     //var result = await client.query("webo",'select ?gender ?loc ?fans ?fav where{?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_name> "zxc".?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_gender> ?gender.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_location> ?loc.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_followersnum> ?fans.?o <file:///C:/Users/qq150/Desktop/d2rq/d2rq-0.8.1/vocab/user_favouritesnum> ?fav.}');
@@ -607,6 +625,7 @@ router.get('/data',async (ctx,next)=>{
         friends,myid,owner
     });
     await next(); 
+    
 }
 )
 app.use(router.routes());
